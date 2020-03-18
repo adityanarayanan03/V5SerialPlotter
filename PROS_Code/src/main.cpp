@@ -17,6 +17,6 @@ void autonomous() {
 void opcontrol()
 {
   while(true){
-    printf("%d \n", 1);  
+    printf("%f\n", 1.0);
   }
 }
