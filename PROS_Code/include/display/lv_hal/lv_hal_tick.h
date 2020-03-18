@@ -13,13 +13,8 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#ifdef LV_CONF_INCLUDE_SIMPLE
-#include "lv_conf.h"
-#else
-#include "display/lv_conf.h"
-#endif
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 /*********************
  *      DEFINES
@@ -49,7 +44,7 @@ LV_ATTRIBUTE_TICK_INC void lv_tick_inc(uint32_t tick_period);
 uint32_t lv_tick_get(void);
 
 /**
- * Get the elapsed milliseconds since a previous time stamp
+ * Get the elapsed milliseconds science a previous time stamp
  * @param prev_tick a previous time stamp (return value of systick_get() )
  * @return the elapsed milliseconds since 'prev_tick'
  */
@@ -63,4 +58,4 @@ uint32_t lv_tick_elaps(uint32_t prev_tick);
 } /* extern "C" */
 #endif
 
-#endif  /*LV_HAL_TICK_H*/
+#endif /*LV_HAL_TICK_H*/

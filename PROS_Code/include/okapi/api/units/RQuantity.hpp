@@ -1,4 +1,4 @@
-/*
+/**
  * @author Mikhail Semenov
  * @author Benjamin Jurke
  * @author Ryan Benasutti, WPI
@@ -13,7 +13,6 @@
  */
 #pragma once
 
-#include <cmath>
 #include <ratio>
 
 namespace okapi {
@@ -44,16 +43,6 @@ class RQuantity {
     return RQuantity(value * -1);
   }
 
-  constexpr RQuantity const &operator*=(const double rhs) {
-    value *= rhs;
-    return *this;
-  }
-
-  constexpr RQuantity const &operator/=(const double rhs) {
-    value /= rhs;
-    return *this;
-  }
-
   // Returns the value of the quantity in multiples of the specified unit
   constexpr double convert(const RQuantity &rhs) const {
     return value / rhs.value;
@@ -62,21 +51,6 @@ class RQuantity {
   // returns the raw value of the quantity (should not be used)
   constexpr double getValue() const {
     return value;
-  }
-
-  constexpr RQuantity<MassDim, LengthDim, TimeDim, AngleDim> abs() const {
-    return RQuantity<MassDim, LengthDim, TimeDim, AngleDim>(std::fabs(value));
-  }
-
-  constexpr RQuantity<std::ratio_divide<MassDim, std::ratio<2>>,
-                      std::ratio_divide<LengthDim, std::ratio<2>>,
-                      std::ratio_divide<TimeDim, std::ratio<2>>,
-                      std::ratio_divide<AngleDim, std::ratio<2>>>
-  sqrt() const {
-    return RQuantity<std::ratio_divide<MassDim, std::ratio<2>>,
-                     std::ratio_divide<LengthDim, std::ratio<2>>,
-                     std::ratio_divide<TimeDim, std::ratio<2>>,
-                     std::ratio_divide<AngleDim, std::ratio<2>>>(std::sqrt(value));
   }
 
   private:
@@ -91,7 +65,6 @@ class RQuantity {
 
 // Unitless
 QUANTITY_TYPE(0, 0, 0, 0, Number)
-constexpr Number number(1.0);
 
 // Standard arithmetic operators:
 // ------------------------------

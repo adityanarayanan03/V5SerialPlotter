@@ -30,8 +30,8 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENXIO - The given value is not within the range of V5 ports (1-21).
-	 * ENODEV - The port cannot be configured as a motor
+	 * EINVAL - The given value is not within the range of V5 ports (1-21).
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param port
 	 *        The V5 port number from 1-21
@@ -67,7 +67,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param voltage
 	 *        The new motor voltage from -127 to 127
@@ -86,7 +86,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param voltage
 	 *        The new motor voltage from -127 to 127
@@ -108,7 +108,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param position
 	 *        The absolute position to move to in the motor's encoder units
@@ -133,7 +133,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param position
 	 *        The relative position to move to in the motor's encoder units
@@ -156,7 +156,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param velocity
 	 *        The new motor velocity from -+-100, +-200, or +-600 depending on the
@@ -172,7 +172,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param port
 	 *        The V5 port number from 1-21
@@ -191,7 +191,8 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EINVAL - The given value is not within the range of V5 ports (1-21).
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param velocity
 	 *        The new motor velocity from +-100, +-200, or +-600 depending on the
@@ -207,7 +208,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The target position in its encoder units or PROS_ERR_F if the
 	 * operation failed, setting errno.
@@ -219,7 +220,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The commanded motor velocity from +-100, +-200, or +-600, or
 	 * PROS_ERR if the operation failed, setting errno.
@@ -237,7 +238,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The motor's actual velocity in RPM or PROS_ERR_F if the operation
 	 * failed, setting errno.
@@ -249,7 +250,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The motor's current in mA or PROS_ERR if the operation failed,
 	 * setting errno.
@@ -261,7 +262,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return 1 for moving in the positive direction, -1 for moving in the
 	 * negative direction, and PROS_ERR if the operation failed, setting errno.
@@ -277,7 +278,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The motor's efficiency in percent or PROS_ERR_F if the operation
 	 * failed, setting errno.
@@ -289,7 +290,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return 1 if the motor's current limit is being exceeded and 0 if the
 	 * current limit is not exceeded, or PROS_ERR if the operation failed, setting
@@ -299,10 +300,6 @@ class Motor {
 
 	/**
 	 * Checks if the motor is stopped.
-	 *
-	 * This function uses the following values of errno when an error state is
-	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
 	 *
 	 * \note Although this function forwards data from the motor, the motor
 	 * presently does not provide any value. This function returns PROS_ERR with
@@ -315,10 +312,6 @@ class Motor {
 
 	/**
 	 * Checks if the motor is at its zero position.
-	 *
-	 * This function uses the following values of errno when an error state is
-	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
 	 *
 	 * \note Although this function forwards data from the motor, the motor
 	 * presently does not provide any value. This function returns PROS_ERR with
@@ -337,7 +330,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param port
 	 *        The V5 port number from 1-21
@@ -353,7 +346,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param port
 	 *        The V5 port number from 1-21
@@ -367,7 +360,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param[in] timestamp
 	 *            A pointer to a time in milliseconds for which the encoder count
@@ -384,7 +377,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return 1 if the temperature limit is exceeded and 0 if the temperature is
 	 * below the limit, or PROS_ERR if the operation failed, setting errno.
@@ -396,7 +389,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The motor's absolute position in its encoder units or PROS_ERR_F
 	 * if the operation failed, setting errno.
@@ -408,7 +401,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The motor's power draw in Watts or PROS_ERR_F if the operation
 	 * failed, setting errno.
@@ -420,7 +413,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The motor's temperature in degrees Celsius or PROS_ERR_F if the
 	 * operation failed, setting errno.
@@ -432,7 +425,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The motor's torque in Nm or PROS_ERR_F if the operation failed,
 	 * setting errno.
@@ -444,7 +437,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The motor's voltage in mV or PROS_ERR_F if the operation failed,
 	 * setting errno.
@@ -465,7 +458,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param position
 	 *        The new reference position in its encoder units
@@ -480,7 +473,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return 1 if the operation was successful or PROS_ERR if the operation
 	 * failed, setting errno.
@@ -492,7 +485,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param mode
 	 *        The motor_brake_mode_e_t to set for the motor
@@ -507,7 +500,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param limit
 	 *        The new current limit in mA
@@ -522,7 +515,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param units
 	 *        The new motor encoder units
@@ -537,7 +530,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param gearset
 	 *        The new motor gearset
@@ -553,6 +546,11 @@ class Motor {
 	 * 2.0625, etc.
 	 * This function will convert the floating point values to the nearest 4.4
 	 * value.
+	 *
+	 * This function uses the following values of errno when an error state is
+	 * reached:
+	 * EINVAL - The given value is not within the range of V5 ports (1-21).
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param kf
 	 *        The feedforward constant
@@ -573,6 +571,11 @@ class Motor {
 	 * 2.0625, etc.
 	 * This function will convert the floating point values to the nearest 4.4
 	 * value.
+	 *
+	 * This function uses the following values of errno when an error state is
+	 * reached:
+	 * EINVAL - The given value is not within the range of V5 ports (1-21).
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param kf
 	 *        The feedforward constant
@@ -606,7 +609,8 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EINVAL - The given value is not within the range of V5 ports (1-21).
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param pid
 	 *        The new motor PID constants
@@ -624,7 +628,8 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EINVAL - The given value is not within the range of V5 ports (1-21).
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param pid
 	 *        The new motor PID constants
@@ -643,7 +648,8 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EINVAL - The given value is not within the range of V5 ports (1-21).
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param pid
 	 *        The new motor PID constants
@@ -661,7 +667,8 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EINVAL - The given value is not within the range of V5 ports (1-21).
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param pid
 	 *        The new motor PID constants
@@ -678,7 +685,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param reverse
 	 *        True reverses the motor, false is default
@@ -693,7 +700,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param limit
 	 *        The new voltage limit in Volts
@@ -708,7 +715,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return One of motor_brake_mode_e_t, according to what was set for the
 	 * motor, or E_MOTOR_BRAKE_INVALID if the operation failed, setting errno.
@@ -722,7 +729,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The motor's current limit in mA or PROS_ERR if the operation failed,
 	 * setting errno.
@@ -734,7 +741,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return One of motor_encoder_units_e_t according to what is set for the
 	 * motor or E_MOTOR_ENCODER_INVALID if the operation failed.
@@ -746,7 +753,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return One of motor_gearset_e_t according to what is set for the motor,
 	 * or E_GEARSET_INVALID if the operation failed.
@@ -760,7 +767,8 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EINVAL - The given value is not within the range of V5 ports (1-21).
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * Additionally, in an error state all values of the returned struct are set
 	 * to their negative maximum values.
@@ -777,7 +785,8 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EINVAL - The given value is not within the range of V5 ports (1-21).
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * Additionally, in an error state all values of the returned struct are set
 	 * to their negative maximum values.
@@ -792,7 +801,7 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return 1 if the motor has been reversed and 0 if the motor was not
 	 * reversed, or PROS_ERR if the operation failed, setting errno.
@@ -807,19 +816,12 @@ class Motor {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a motor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The motor's voltage limit in V or PROS_ERR if the operation failed,
 	 * setting errno.
 	 */
 	virtual std::int32_t get_voltage_limit(void) const;
-
-	/**
-	 * Gets the port number of the motor.
-	 *
-	 * \return The motor's port number.
-	 */
-	virtual std::uint8_t get_port(void) const;
 
 	private:
 	const std::uint8_t _port;

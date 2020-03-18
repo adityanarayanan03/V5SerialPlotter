@@ -1,4 +1,4 @@
-/*
+/**
  * @author Ryan Benasutti, WPI
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -21,20 +21,24 @@ class AsyncPosIntegratedController : public AsyncPositionController<double, doub
   public:
   /**
    * Closed-loop controller that uses the V5 motor's onboard control to move. Input units are
-   * whatever units the motor is in. Throws a std::invalid_argument exception if the gear ratio is
-   * zero.
+   * whatever units the motor is in. The maximum velocity for profiled movements will be the maximum
+   * velocity for the motor's gearset.
    *
-   * @param imotor The motor to control.
-   * @param ipair The gearset.
-   * @param imaxVelocity The maximum velocity after gearing.
-   * @param itimeUtil The TimeUtil.
-   * @param ilogger The logger this instance will log to.
+   * @param imotor the motor to control
    */
   AsyncPosIntegratedController(const std::shared_ptr<AbstractMotor> &imotor,
-                               const AbstractMotor::GearsetRatioPair &ipair,
+                               const TimeUtil &itimeUtil);
+
+  /**
+   * Closed-loop controller that uses the V5 motor's onboard control to move. Input units are
+   * whatever units the motor is in.
+   *
+   * @param imotor the motor to control
+   * @param imaxVelocity the maximum velocity during a profiled movement in RPM [0-600].
+   */
+  AsyncPosIntegratedController(const std::shared_ptr<AbstractMotor> &imotor,
                                std::int32_t imaxVelocity,
-                               const TimeUtil &itimeUtil,
-                               const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
+                               const TimeUtil &itimeUtil);
 
   /**
    * Sets the target for the controller.
@@ -47,11 +51,6 @@ class AsyncPosIntegratedController : public AsyncPositionController<double, doub
    * @return the last target
    */
   double getTarget() override;
-
-  /**
-   * @return The most recent value of the process variable.
-   */
-  double getProcessValue() const override;
 
   /**
    * Returns the last error of the controller. Does not update when disabled.
@@ -110,16 +109,18 @@ class AsyncPosIntegratedController : public AsyncPositionController<double, doub
   void controllerSet(double ivalue) override;
 
   /**
-   * Sets the "absolute" zero position of the controller to its current position.
+   * Sets a new maximum velocity in RPM [0-600].
+   *
+   * @param imaxVelocity the new maximum velocity
    */
-  void tarePosition() override;
+  virtual void setMaxVelocity(std::int32_t imaxVelocity);
 
   /**
-   * Sets a new maximum velocity in motor RPM [0-600].
+   * Sets the "absolute" zero position of the motor to its current position.
    *
-   * @param imaxVelocity The new maximum velocity in motor RPM [0-600].
+   * @return 1 if the operation was successful or PROS_ERR if the operation failed, setting errno.
    */
-  void setMaxVelocity(std::int32_t imaxVelocity) override;
+  virtual std::int32_t tarePosition();
 
   /**
    * Stops the motor mid-movement. Does not change the last set target.
@@ -127,16 +128,14 @@ class AsyncPosIntegratedController : public AsyncPositionController<double, doub
   virtual void stop();
 
   protected:
-  std::shared_ptr<Logger> logger;
-  TimeUtil timeUtil;
+  Logger *logger;
   std::shared_ptr<AbstractMotor> motor;
-  AbstractMotor::GearsetRatioPair pair;
-  std::int32_t maxVelocity;
-  double lastTarget{0};
-  double offset{0};
-  bool controllerIsDisabled{false};
-  bool hasFirstTarget{false};
+  std::int32_t maxVelocity{600}; // 600 RPM max, vexOS will limit if the gearset can't go this fast
+  double lastTarget = 0;
+  bool controllerIsDisabled = false;
+  bool hasFirstTarget = false;
   std::unique_ptr<SettledUtil> settledUtil;
+  std::unique_ptr<AbstractRate> rate;
 
   /**
    * Resumes moving after the controller is reset. Should not cause movement if the controller is

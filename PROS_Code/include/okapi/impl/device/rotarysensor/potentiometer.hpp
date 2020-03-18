@@ -1,4 +1,4 @@
-/*
+/**
  * @author Ryan Benasutti, WPI
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -33,6 +33,6 @@ class Potentiometer : public RotarySensor {
   virtual double controllerGet() override;
 
   protected:
-  std::uint8_t port;
+  pros::ADIPotentiometer pot;
 };
 } // namespace okapi

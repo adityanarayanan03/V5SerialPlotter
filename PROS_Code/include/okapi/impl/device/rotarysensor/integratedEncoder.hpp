@@ -1,4 +1,4 @@
-/*
+/**
  * @author Ryan Benasutti, WPI
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -17,17 +17,16 @@ class IntegratedEncoder : public ContinuousRotarySensor {
   /**
    * Integrated motor encoder. Uses the encoder inside the V5 motor.
    *
-   * @param imotor The motor to use the encoder from.
+   * @param imotor the motor to use the encoder from.
    */
-  IntegratedEncoder(const okapi::Motor &imotor);
+  explicit IntegratedEncoder(const pros::Motor &imotor);
 
   /**
    * Integrated motor encoder. Uses the encoder inside the V5 motor.
    *
-   * @param iport The motor's port number in the range [1, 21].
-   * @param ireversed Whether the encoder is reversed.
+   * @param imotor the motor to use the encoder from.
    */
-  IntegratedEncoder(std::int8_t iport, bool ireversed = false);
+  explicit IntegratedEncoder(const okapi::Motor &imotor);
 
   /**
    * Get the current sensor value.
@@ -39,7 +38,7 @@ class IntegratedEncoder : public ContinuousRotarySensor {
   /**
    * Reset the sensor to zero.
    *
-   * @return `1` on success, `PROS_ERR` on fail
+   * @return 1 on success, PROS_ERR on fail
    */
   virtual std::int32_t reset() override;
 
@@ -52,7 +51,6 @@ class IntegratedEncoder : public ContinuousRotarySensor {
   virtual double controllerGet() override;
 
   protected:
-  std::uint8_t port;
-  std::int8_t reversed{1};
+  pros::Motor motor;
 };
 } // namespace okapi

@@ -9,7 +9,7 @@
  * This file should not be modified by users, since it gets replaced whenever
  * a kernel upgrade occurs.
  *
- * Copyright (c) 2017-2020, Purdue University ACM SIGBots.
+ * Copyright (c) 2017-2018, Purdue University ACM SIGBots.
  * All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -30,11 +30,6 @@ class Vision {
 	/**
 	 * Create a Vision Sensor object on the given port.
 	 *
-	 * This function uses the following values of errno when an error state is
-	 * reached:
-	 * ENXIO - The given value is not within the range of V5 ports (1-21).
-	 * ENODEV - The port cannot be configured as a vision sensor
-	 *
 	 * \param port
 	 *        The V5 port number from 1-21
 	 * \param zero_point
@@ -48,7 +43,7 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return 1 if the operation was successful or PROS_ERR if the operation
 	 * failed, setting errno.
@@ -91,8 +86,8 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * EINVAL - Fewer than two signatures have been provided or one of the
-	 *          signatures is out of its [1-7] range (or 0 when omitted).
+	 * EINVAL - Fewer than two signatures have been provided, or one of the
+	 *          signatures is out of its [1-7] range.
 	 *
 	 * \param sig_id1
 	 *        The first signature id [1-7] to add to the color code
@@ -116,9 +111,9 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 * EDOM - size_id is greater than the number of available objects.
-	 * EAGAIN - Reading the vision sensor failed for an unknown reason.
+	 * EHOSTDOWN - Reading the vision sensor failed for an unknown reason.
 	 *
 	 * \param size_id
 	 *        The object to read from a list roughly ordered by object size
@@ -134,10 +129,9 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 * EDOM - size_id is greater than the number of available objects.
-	 * EINVAL - sig_id is outside the range [1-8]
-	 * EAGAIN - Reading the vision sensor failed for an unknown reason.
+	 * EHOSTDOWN - Reading the vision sensor failed for an unknown reason.
 	 *
 	 * \param size_id
 	 *        The object to read from a list roughly ordered by object size
@@ -156,7 +150,7 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 * EAGAIN - Reading the Vision Sensor failed for an unknown reason.
 	 *
 	 * \param size_id
@@ -177,7 +171,7 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The current exposure parameter from [0,150],
 	 * PROS_ERR if an error occurred
@@ -189,7 +183,7 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The number of objects detected on the specified vision sensor.
 	 * Returns PROS_ERR if the port was invalid or an error occurred.
@@ -198,10 +192,6 @@ class Vision {
 
 	/**
 	 * Gets the object detection signature with the given id number.
-	 *
-	 * This function uses the following values of errno when an error state is
-	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
 	 *
 	 * \param signature_id
 	 *        The signature id to read
@@ -215,27 +205,19 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \return The current RGB white balance setting of the sensor
 	 */
 	std::int32_t get_white_balance(void) const;
 
 	/**
-	 * Gets the port number of the Vision Sensor.
-	 *
-	 * \return The vision sensor's port number.
-	 */
-	std::uint8_t get_port(void) const;
-
-	/**
 	 * Reads up to object_count object descriptors into object_arr.
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 * EDOM - size_id is greater than the number of available objects.
-	 * EAGAIN - Reading the vision sensor failed for an unknown reason.
 	 *
 	 * \param size_id
 	 *        The object to read from a list roughly ordered by object size
@@ -259,10 +241,9 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 * EDOM - size_id is greater than the number of available objects.
-	 * EINVAL - sig_id is outside the range [1-8]
-	 * EAGAIN - Reading the vision sensor failed for an unknown reason.
+	 * EHOSTDOWN - Reading the vision sensor failed for an unknown reason.
 	 *
 	 * \param object_count
 	 *        The number of objects to read
@@ -289,9 +270,8 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * EDOM - size_id is greater than the number of available objects.
-	 * ENODEV - The port cannot be configured as a vision sensor
-	 * EAGAIN - Reading the vision sensor failed for an unknown reason.
+	 * EINVAL - Fewer than object_count number of objects were found.
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param object_count
 	 *        The number of objects to read
@@ -327,7 +307,7 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param enabled
 	 * 		    Pass 0 to disable, 1 to enable
@@ -344,7 +324,7 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param percent
 	 *        The new exposure setting from [0,150].
@@ -359,7 +339,7 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param rgb
 	 *        An RGB code to set the LED to
@@ -375,11 +355,6 @@ class Vision {
 	 * NOTE: This saves the signature in volatile memory, and the signature will be
 	 * lost as soon as the sensor is powered down.
 	 *
-	 * This function uses the following values of errno when an error state is
-	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
-	 * EINVAL - sig_id is outside the range [1-8]
-	 *
 	 * \param signature_id
 	 *        The signature id to store into
 	 * \param[in] signature_ptr
@@ -394,7 +369,7 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param rgb
 	 *        The new RGB white balance setting of the sensor
@@ -413,7 +388,7 @@ class Vision {
 	 *
 	 * This function uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EACCES - Another resource is currently trying to access the port.
 	 *
 	 * \param zero_point
 	 *        One of vision_zero_e_t to set the (0,0) coordinate for the FOV
@@ -428,7 +403,8 @@ class Vision {
 	 *
 	 * This functions uses the following values of errno when an error state is
 	 * reached:
-	 * ENODEV - The port cannot be configured as a vision sensor
+	 * EINVAL - The given port is not within the range of V5 ports (1-21)
+	 * EACCESS - Anothe resources is currently trying to access the port
 	 *
 	 * \param enable
 	 *        Disable Wi-Fi on the Vision sensor if 0, enable otherwise (e.g. 1)

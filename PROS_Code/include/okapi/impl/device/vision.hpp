@@ -1,4 +1,4 @@
-/*
+/**
  * @author Ryan Benasutti, WPI
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,13 +7,8 @@
  */
 #pragma once
 
-namespace okapi {
-/**
- * The mode for the OdomState calculated by Odometry.
- */
-enum class StateMode {
-  FRAME_TRANSFORMATION, ///< +x is forward, +y is right, 0 degrees is along +x
-  CARTESIAN             ///< +x is right, +y is forward, 0 degrees is along +y
-};
+#include "api.h"
 
+namespace okapi {
+using pros::Vision;
 } // namespace okapi

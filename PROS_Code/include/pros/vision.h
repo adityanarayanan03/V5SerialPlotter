@@ -9,7 +9,7 @@
  * This file should not be modified by users, since it gets replaced whenever
  * a kernel upgrade occurs.
  *
- * Copyright (c) 2017-2020, Purdue University ACM SIGBots.
+ * Copyright (c) 2017-2018, Purdue University ACM SIGBots.
  * All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -121,8 +121,8 @@ namespace c {
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
  *
  * \param port
  *        The V5 port number from 1-21
@@ -167,8 +167,8 @@ vision_signature_s_t vision_signature_from_utility(const int32_t id, const int32
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * EINVAL - Fewer than two signatures have been provided or one of the
- *          signatures is out of its [1-7] range (or 0 when omitted).
+ * EINVAL - Fewer than two signatures have been provided, or one of the
+ *          signatures is out of its [1-7] range.
  *
  * \param port
  *        The V5 port number from 1-21
@@ -193,8 +193,8 @@ vision_color_code_t vision_create_color_code(uint8_t port, const uint32_t sig_id
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
  * EDOM - size_id is greater than the number of available objects.
  * EHOSTDOWN - Reading the vision sensor failed for an unknown reason.
  *
@@ -214,11 +214,10 @@ vision_object_s_t vision_get_by_size(uint8_t port, const uint32_t size_id);
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
- * EINVAL - sig_id is outside the range [1-8]
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
  * EDOM - size_id is greater than the number of available objects.
- * EAGAIN - Reading the vision sensor failed for an unknown reason.
+ * EHOSTDOWN - Reading the vision sensor failed for an unknown reason.
  *
  * \param port
  *        The V5 port number from 1-21
@@ -238,9 +237,9 @@ vision_object_s_t vision_get_by_sig(uint8_t port, const uint32_t size_id, const 
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
- * EAGAIN - Reading the vision sensor failed for an unknown reason.
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
+ * EAGAIN - Reading the Vision Sensor failed for an unknown reason.
  *
  * \param port
  *        The V5 port number from 1-21
@@ -262,8 +261,8 @@ vision_object_s_t vision_get_by_code(uint8_t port, const uint32_t size_id, const
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
  *
  * \param port
  *        The V5 port number from 1-21
@@ -278,8 +277,8 @@ int32_t vision_get_exposure(uint8_t port);
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
  *
  * \param port
  *        The V5 port number from 1-21
@@ -294,8 +293,8 @@ int32_t vision_get_object_count(uint8_t port);
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
  *
  * \param port
  * 		    The V5 port number from 1-21
@@ -319,9 +318,9 @@ int32_t vision_print_signature(const vision_signature_s_t sig);
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21), or
+ * EINVAL - The given value is not within the range of V5 ports (1-21), or
  *          fewer than object_count number of objects were found.
- * ENODEV - The port cannot be configured as a vision sensor
+ * EACCES - Another resource is currently trying to access the port.
  * EDOM - size_id is greater than the number of available objects.
  *
  * \param port
@@ -348,9 +347,9 @@ int32_t vision_read_by_size(uint8_t port, const uint32_t size_id, const uint32_t
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21), or
+ * EINVAL - The given value is not within the range of V5 ports (1-21), or
  *          fewer than object_count number of objects were found.
- * ENODEV - The port cannot be configured as a vision sensor
+ * EACCES - Another resource is currently trying to access the port.
  * EDOM - size_id is greater than the number of available objects.
  *
  * \param port
@@ -379,9 +378,9 @@ int32_t vision_read_by_sig(uint8_t port, const uint32_t size_id, const uint32_t 
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21), or
+ * EINVAL - The given value is not within the range of V5 ports (1-21), or
  *          fewer than object_count number of objects were found.
- * ENODEV - The port cannot be configured as a vision sensor
+ * EACCES - Another resource is currently trying to access the port.
  *
  * \param port
  *        The V5 port number from 1-21
@@ -438,9 +437,8 @@ int32_t vision_set_signature(uint8_t port, const uint8_t signature_id, vision_si
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
- * EINVAL - enable was not 0 or 1
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
  *
  * \param port
  * 		    The V5 port number from 1-21
@@ -459,8 +457,8 @@ int32_t vision_set_auto_white_balance(uint8_t port, const uint8_t enable);
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
  *
  * \param port
  *        The V5 port number from 1-21
@@ -477,8 +475,8 @@ int32_t vision_set_exposure(uint8_t port, const uint8_t exposure);
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
  *
  * \param port
  *        The V5 port number from 1-21
@@ -495,8 +493,8 @@ int32_t vision_set_led(uint8_t port, const int32_t rgb);
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
  *
  * \param port
  * 		    The V5 port number from 1-21
@@ -517,8 +515,8 @@ int32_t vision_set_white_balance(uint8_t port, const int32_t rgb);
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
- * ENODEV - The port cannot be configured as a vision sensor
+ * EINVAL - The given value is not within the range of V5 ports (1-21).
+ * EACCES - Another resource is currently trying to access the port.
  *
  * \param port
  * 		    The V5 port number from 1-21
@@ -535,7 +533,7 @@ int32_t vision_set_zero_point(uint8_t port, vision_zero_e_t zero_point);
  *
  * This functions uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given port is not within the range of V5 ports (1-21)
+ * EINVAL - The given port is not within the range of V5 ports (1-21)
  * EACCESS - Anothe resources is currently trying to access the port
  *
  * \param port
