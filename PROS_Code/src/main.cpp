@@ -16,7 +16,18 @@ void autonomous() {
 
 void opcontrol()
 {
+  float distance = 1.0;
+  float commandVelocity = 200.0;
+  float actualVelocity = 180.0;
+  Controller masterController;
   while(true){
-    printf("%f\n", 1.0);
+    chassis.arcade(masterController.getAnalog(ControllerAnalog::leftX),
+                   masterController.getAnalog(ControllerAnalog::leftY));
+    printf("%f", leftDTEnc.get());
+    printf("%s", ",");
+    printf("%f", 200.0*masterController.getAnalog(ControllerAnalog::leftY));
+    printf("%s", ",");
+    printf("%f \n", dtLF.getActualVelocity());
+    pros::delay(20);
   }
 }
