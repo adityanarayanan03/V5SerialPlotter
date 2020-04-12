@@ -37,7 +37,7 @@ lineDropCount = 0
 #timed run
 startTime = time.time()
 #Starting loop with 5.0 second time condition
-while(time.time() - startTime < 6.0):
+while(time.time() - startTime < testLen):
     #Runs if data is available
     if (dataStream.is_open):
         #unpacks and decodes serial lines
