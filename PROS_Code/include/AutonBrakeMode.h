@@ -4,9 +4,9 @@
 
 //Setting brake modes for each of left and right.
 //They are controlled independently for turns
-leftDT.setBrakeMode(AbstractMotor::brakeMode::brake);
-rightDT.setBrakeMode(AbstractMotor::brakeMode::brake);
+leftDT.setBrakeMode(AbstractMotor::brakeMode::coast);
+rightDT.setBrakeMode(AbstractMotor::brakeMode::coast);
 
 //Setting brake mode for chassis as a whole.
 //Basically just for the sake of redundancy.
-chassis.setBrakeMode(AbstractMotor::brakeMode::brake);
+chassis.setBrakeMode(AbstractMotor::brakeMode::coast);
