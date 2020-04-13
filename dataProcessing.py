@@ -1,7 +1,18 @@
+#Some imports
 import serial
 import matplotlib.pyplot as plt
 import time
 import sys
+
+#Function that takes string type UTF-8 encoded serial plotting and return a list of floats
+def preProcessData(incomingDatum):
+    incomingDatum = incomingDatum.decode('utf-8')
+    incomingDatum = incomingDatum.strip('\n')
+    incomingDatum = incomingDatum[6:] #6 is unique to this situation. It might not be necessary at all.
+
+    #splits incoming values at the comma, packs into a list
+    incomingDatum = incomingDatum.split(',')
+    return incomingDatum
 
 #Accepts user input for the serial port as well as the test duration
 comPort = str(input("Please enter the V5 User port to be used:    "))
@@ -12,9 +23,9 @@ exceptionCounter = 0
 while (1):
     #Attempts to find data stream from serial port. 
     try:
-        #Baudrate should be specified better
-        dataStream = serial.Serial(comPort, baudrate = 9600,timeout = 1)
+        dataStream = serial.Serial(comPort, baudrate = 115200,timeout = 1) #Set to maximum baud for pReCIsIoN.
         print("Data Stream Found. Starting collection with user input end time.")
+        break
 
     #Error handling in the chance of no serial link found
     except:
@@ -25,53 +36,36 @@ while (1):
         time.sleep(2)
         exceptionCounter+=1
 
-#Empty lists to hold data
-distances = []
-commandVelocity = []
-actualVelocity = []
+#Empty list to hold data
+fullDataSet = []
+xAxis = []
 
 #Failure variable for looping
 lineDropCount = 0
 
-
-#timed run
+#timed run counter
 startTime = time.time()
-#Starting loop with 5.0 second time condition
+
+#main loop
 while(time.time() - startTime < testLen):
+
     #Runs if data is available
     if (dataStream.is_open):
+
         #unpacks and decodes serial lines
-        incomingDatum = dataStream.readline()
-        incomingDatum = incomingDatum.decode('utf-8')
-        incomingDatum = incomingDatum.strip('\n')
-        incomingDatum = incomingDatum[6:] #6 is unique to this situation. It might not be necessary at all.
-        
-        try:
-            #splits incoming values at the comma (3 required), packs into a tuple
-            (currentDist, currentCommandVel, currentActualVel) = incomingDatum.split(',')
+        incomingDatum = preProcessData(dataStream.readline())
 
-            #Typecast string values into float
-            currentDist = float(currentDist)
-            currentActualVel = float(currentActualVel)
-            currentCommandVel = float(currentCommandVel)
-
-            #Add datum to various lists
-            distances.append(currentDist)
-            commandVelocity.append(currentCommandVel)
-            actualVelocity.append(currentActualVel)
-
-        except:
-            if (lineDropCount > 49):
-                print("Too many dropped lines. Exiting to Plotting")
-                break
-
-            print("Dropped line. Did not receive 3 unpackable values.")
-            lineDropCount+=1
+        #Convert list of strings into a list of float
+        for stringDatumIndex in range(len(incomingDatum)):
+            incomingDatum[stringDatumIndex] = float(incomingDatum[stringDatumIndex])
+                
+        xAxis.append(incomingDatum[0]) #Apppend the x-series value to our x-list
+        incomingDatum.pop(0) #Delete x-series value from the datum list
+        fullDataSet.append(incomingDatum) #append the n-series' of single element list to full set
 
 print("Plotting")
 
 #Using matplotlib pyplot to create graphic
 plt.figure(1)
-plt.plot(distances, commandVelocity, color = 'blue')
-plt.plot(distances,actualVelocity, color = 'red')
+plt.plot(xAxis, fullDataSet)
 plt.show()

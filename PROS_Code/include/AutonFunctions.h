@@ -8,18 +8,14 @@ set according to AutonBrakeMode.h*/
 void forward(){
     int i = 1;
     while(true){
-        if (i < 50000)
-        {
-            chassis.moveVoltage(12000);
-        }
-        else
-        {
-            chassis.moveVoltage(0);
-        }
-        i=i+1;
+        chassis.moveVoltage(6000);
         printf("%f",leftFrontEncoder.get());
         printf("%s", ",");
         printf("%f",chassis.getActualVelocity());
+        printf("%s", ",");
+        printf("%f", 300.0);
+        printf("%s", ",");
+        printf("%f", 250.0);
         printf("%s", ",");
         printf("%f \n", 200.0);
     }
