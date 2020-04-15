@@ -7,8 +7,11 @@ set according to AutonBrakeMode.h*/
 //void forward(float targetDistance, int maxSpeed = 170);
 void forward(){
     int i = 1;
+    printf("%s \n", "{START}");
+    pros::delay(1000);
     while(true){
         chassis.moveVoltage(6000);
+        printf("%s", "{");
         printf("%f",leftFrontEncoder.get());
         printf("%s", ",");
         printf("%f",chassis.getActualVelocity());
@@ -17,6 +20,7 @@ void forward(){
         printf("%s", ",");
         printf("%f", 250.0);
         printf("%s", ",");
-        printf("%f \n", 200.0);
+        printf("%f", 200.0);
+        printf("%s \n", "}");
     }
 }
