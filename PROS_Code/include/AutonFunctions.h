@@ -9,7 +9,7 @@ void forward(){
     int i = 1;
     printf("%s \n", "{START}");
     pros::delay(1000);
-    while(true){
+    for(i=0; i<50000; i++){
         chassis.moveVoltage(6000);
         printf("%s", "{");
         printf("%f",leftFrontEncoder.get());
@@ -23,4 +23,6 @@ void forward(){
         printf("%f", 200.0);
         printf("%s \n", "}");
     }
+    printf("%s \n", "{STOP}");
+    pros::delay(1000);
 }

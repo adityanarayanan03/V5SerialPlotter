@@ -21,12 +21,30 @@ def preProcessData(incomingDatum):
 
     return incomingDatum
 
-#Accepts user input for the serial port as well as the test duration
-comPort = str(input("Please enter the V5 User port to be used:    "))
-testLen = float(input("Please enter the duration of collection:     "))
 
+usesStopChar = False
+testLen = 0
+comPort = str(input("Please enter the V5 User port to be used:    "))
+
+for i in range(3):
+    stopCharAsk = str(input("Do you want to end data collection with a stop character? (y/n)"))
+    if(stopCharAsk in ["y", "Y", "yes", "Yes", "YES"]):
+        usesStopChar = True
+        break
+    elif (stopCharAsk in ["n", "N","No","no","NO"]): 
+        testLen = float(input("Please enter the duration of collection (seconds):     "))
+        break
+    else:
+        print("That character was not understood. Please try again. ("+str(i+1)+"/3)")
+        time.sleep(1)
+        if (i==2):
+            print("System Exiting")
+            sys.exit()
+
+print("Finding Serial Connection...")
+time.sleep(2)
 #This block of code handles the chance of no data stream being supplied by user on specified port. 
-exceptionCounter = 0
+exceptionCounter = 1
 while (1):
     #Attempts to find data stream from serial port. 
     try:
@@ -37,16 +55,16 @@ while (1):
     #Error handling in the chance of no serial link found
     except:
         if (exceptionCounter > 7):
-            print("Timed out while waiting for data on "+comPort+". Program Ending.")
+            print("Timed out while waiting for connection to "+comPort)
             sys.exit()
-        print("No data stream found on "+comPort+". Re-trying In 2 seconds.")
+        print("No serial connection found on "+comPort+". Re-trying in 2 seconds. ("+str(exceptionCounter)+"/7)")
         time.sleep(2)
         exceptionCounter+=1
 
 #This loop waits for the START Command from V5 Brain
 print("Waiting for data stream to start.")
 while (1):
-    if(preProcessData(dataStream.readline())[0] == 'START'):
+    if(preProcessData(dataStream.readline())[0] == 'START'): #I know (is) is preferred to == but for some reason only == works.
         print("Start command received. Starting Collection")
         break
 
@@ -62,13 +80,17 @@ lineDropCount = 0
 #main loop
 #timed run counter
 startTime = time.time()
-while(time.time() - startTime < testLen):
+while(usesStopChar or time.time() - startTime < testLen):
 
     #Runs if data stream has been opened
     if (dataStream.is_open):
 
         #unpacks and decodes serial lines
         incomingDatum = preProcessData(dataStream.readline())
+        if(incomingDatum[0]=="STOP"):
+            print("Stop Command Received.")
+            time.sleep(1)
+            break
         print(time.time() - startTime)
         #Convert list of strings into a list of float
         try:
