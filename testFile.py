@@ -4,8 +4,14 @@ import sys
 import serial
 import matplotlib.pyplot as plt
 
-#Function that takes string type UTF-8 encoded serial plotting and return a list of floats
 def preProcessData(incomingDatum):
+    '''
+    This function will take in a single line from the serial 
+    stream (with all the mumbo jumbo) and clean it up. Decode
+    using utf-8 encoding, strip of any newline characters that
+    may be present, and save data between the start character({) and
+    the stop character (}) to a list.
+    '''
     incomingDatum = incomingDatum.decode('utf-8')
     incomingDatum = incomingDatum.strip('\n')
 
@@ -21,7 +27,11 @@ def preProcessData(incomingDatum):
     return incomingDatum
 
 class Run:
-
+    '''
+    This class is made for each time the file is run. The class
+    contains information and functions for setting up and running
+    a data collection cycle
+    '''
     def __init__(self):
         self.usesStopChar = False
         self.testLen = 0
@@ -38,6 +48,11 @@ class Run:
         self.testLen = 0
 
     def setUp(self):
+        '''
+        This function takes input to determine settings for the run.
+        This should be modified to take data from buttons rather than
+        user input before the first release.
+        '''
         if (not(self.setUpFlag)):
             self.comPort = str(input("Please enter the V5 User port to be used:    "))
             for i in range(3):
@@ -58,6 +73,12 @@ class Run:
             self.setUpFlag = True
     
     def findSerialConnection(self):
+        '''
+        This function will find a serial connection on the specified port.
+        Timeout is 14 seconds. Once the dataStream variable is set, this
+        function should not be run again without reset(). This should be proofed
+        by the self.connectionFlag.
+        '''
         if (not(self.connectionFlag)):
             print("Finding Serial Connection...")
             time.sleep(2)
@@ -80,6 +101,9 @@ class Run:
             self.connectionFlag = True
 
     def waitForStart(self):
+        '''
+        This function blocks code until the "START" command is received.
+        '''
         #This loop waits for the START Command from V5 Brain
         print("Waiting for data stream to start.")
         while (1):
@@ -88,6 +112,11 @@ class Run:
                 break
     
     def loop(self):
+        '''
+        Main loop for the data collection sequence. May be exited by
+        either duration or receiving the 'STOP' command, depending on
+        variables in settings.
+        '''
         #Failure variable for looping
         lineDropCount = 0
 
@@ -120,11 +149,16 @@ class Run:
                     if (lineDropCount > 50):
                         print("Too many errors. Stopping collection")
                         sys.exit()
+
     def plot(self):
+        '''
+        Uses Matplotlib.pyplot to plot the data set after looping.
+        '''
         plt.plot(self.xAxis, self.fullDataSet)
         plt.show()
         
 #Define some variables for positioning
+#Percentages of frame size for relx and rely command
 horiz1 = 0.025
 horiz2 = 0.075
 horiz3 = 0.15
@@ -176,3 +210,4 @@ testLenEntryBox = Entry(mainWindow)
 testLenEntryBox.place(anchor = 'w', rely = horiz2, relx = vert4 )
 
 mainWindow.mainloop()
+
