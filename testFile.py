@@ -1,3 +1,4 @@
+from tkinter import *
 import time
 import sys
 import serial
@@ -28,6 +29,8 @@ class Run:
         self.dataStream = None
         self.xAxis = []
         self.fullDataSet = []
+        self.setUpFlag = False
+        self.connectionFlag = False
 
     def reset(self):
         self.xAxis = []
@@ -35,42 +38,46 @@ class Run:
         self.testLen = 0
 
     def setUp(self):
-        self.comPort = str(input("Please enter the V5 User port to be used:    "))
-        for i in range(3):
-            stopCharAsk = str(input("Do you want to end data collection with a stop character? (y/n)"))
-            #Structure to determine if the user wants duration based test or length based.
-            if (stopCharAsk in ["y", "Y", "yes", "Yes", "YES"]):
-                self.usesStopChar = True
-                break
-            elif (stopCharAsk in ["n", "N","No","no","NO"]): 
-                self.testLen = float(input("Please enter the duration of collection (seconds):     "))
-                break
-            else:
-                print("That character was not understood. Please try again. ("+str(i+1)+"/3)")
-                time.sleep(1)
-                if (i==2):
-                    print("System Exiting")
-                    sys.exit()
+        if (not(self.setUpFlag)):
+            self.comPort = str(input("Please enter the V5 User port to be used:    "))
+            for i in range(3):
+                stopCharAsk = str(input("Do you want to end data collection with a stop character? (y/n)"))
+                #Structure to determine if the user wants duration based test or length based.
+                if (stopCharAsk in ["y", "Y", "yes", "Yes", "YES"]):
+                    self.usesStopChar = True
+                    break
+                elif (stopCharAsk in ["n", "N","No","no","NO"]): 
+                    self.testLen = float(input("Please enter the duration of collection (seconds):     "))
+                    break
+                else:
+                    print("That character was not understood. Please try again. ("+str(i+1)+"/3)")
+                    time.sleep(1)
+                    if (i==2):
+                        print("System Exiting")
+                        sys.exit()
+            self.setUpFlag = True
     
     def findSerialConnection(self):
-        print("Finding Serial Connection...")
-        time.sleep(2)
-        exceptionCounter = 1 #Variable to count the number of time-outs.
-        while (1):
-            #Attempts to find data stream from serial port. 
-            try:
-                self.dataStream = serial.Serial(self.comPort, baudrate = 115200,timeout = 1) #Set to maximum baud for pReCIsIoN.
-                print("Serial Connection Found. Waiting for data input.")
-                break
+        if (not(self.connectionFlag)):
+            print("Finding Serial Connection...")
+            time.sleep(2)
+            exceptionCounter = 1 #Variable to count the number of time-outs.
+            while (1):
+                #Attempts to find data stream from serial port. 
+                try:
+                    self.dataStream = serial.Serial(self.comPort, baudrate = 115200,timeout = 1) #Set to maximum baud for pReCIsIoN.
+                    print("Serial Connection Found. Waiting for data input.")
+                    break
 
-            #Error handling in the chance of no serial link found
-            except:
-                if (exceptionCounter > 7):
-                    print("Timed out while waiting for connection to "+self.comPort)
-                    sys.exit()
-                print("No serial connection found on "+self.comPort+". Re-trying in 2 seconds. ("+str(exceptionCounter)+"/7)")
-                time.sleep(2)
-                exceptionCounter+=1
+                #Error handling in the chance of no serial link found
+                except:
+                    if (exceptionCounter > 7):
+                        print("Timed out while waiting for connection to "+self.comPort)
+                        sys.exit()
+                    print("No serial connection found on "+self.comPort+". Re-trying in 2 seconds. ("+str(exceptionCounter)+"/7)")
+                    time.sleep(2)
+                    exceptionCounter+=1
+            self.connectionFlag = True
 
     def waitForStart(self):
         #This loop waits for the START Command from V5 Brain
@@ -117,35 +124,55 @@ class Run:
         plt.plot(self.xAxis, self.fullDataSet)
         plt.show()
         
+#Define some variables for positioning
+horiz1 = 0.025
+horiz2 = 0.075
+horiz3 = 0.15
+vert1 = 0.025
+vert2 = .30
+vert3 = .6
+vert4 = .75
 
-def runWithSetup():
-    currentRun = Run()
-    currentRun.setUp()
-    currentRun.findSerialConnection()
-    currentRun.waitForStart()
-    currentRun.loop()
-    currentRun.plot()
-    return currentRun
+#Create the full window that user will see
+mainWindow = Tk()
+mainWindow.geometry("700x700")
+mainWindow.title("PROS Serial Plotter")
 
-def runWithoutSetup(currentRun):
-    currentRun.reset()
-    #currentRun.findSerialConnection()
-    currentRun.waitForStart()
-    currentRun.loop()
-    currentRun.plot()
-    return currentRun
+#Create the settings title
+settingsHeader = Label(text = 'Settings:')
+settingsHeader.config(font = ("Times", 15))
+settingsHeader.place(anchor = 'w', rely =vert1, relx=horiz1)
 
-#Main loop:
-currentRun = runWithSetup()
-while (1):
-    runAgain = str(input("Would you like to run the program again?"))
-    if (runAgain in ["y", "Y", "yes", "Yes", "YES"]):
-        setupYesOrNo = str(input("Would you like to run setup again?"))
-        if(setupYesOrNo in ["y", "Y", "yes", "Yes", "YES"]):
-            currentRun = runWithSetup()
-        else:
-            currentRun = runWithoutSetup(currentRun)
-    elif (runAgain in ["n", "N", "no","NO","No"]):
-        break
-    else:
-        print("That command was not understood!")
+#Create the drop-down menu for Serial port selection
+comPortInput = StringVar(mainWindow)
+comPortInput.set("Select Serial Port") #Setting Default Value
+comPortOptions = ["option1","option2"] #This is where the list of available ports will go
+w = OptionMenu(mainWindow, comPortInput, *comPortOptions)
+w.place(anchor='w', rely = horiz2, relx = vert1)
+comPortInput = comPortInput.get() #This command will prob need to go in some loop later on
+
+#Create the save plot selector
+savePlot = BooleanVar()
+savePlotCheckButton = Checkbutton(mainWindow, text = 'Save Plot', variable= savePlot)
+savePlotCheckButton.place(anchor = 'w', rely = horiz3, relx = vert1)
+
+#Create the checkbox to use duration-based test
+usesDuration = BooleanVar()
+usesDurationCheckButton = Checkbutton(mainWindow, text = 'Time-based data collection', variable = usesDuration)
+usesDurationCheckButton.place(anchor = 'w', rely = horiz2, relx = vert2)
+
+#Create the save settings option
+saveSettings = BooleanVar()
+saveSettingsCheckButton = Checkbutton(mainWindow, text = 'Save Current Settings', variable = saveSettings)
+saveSettingsCheckButton.place(anchor = 'w', rely = horiz3, relx =vert2)
+
+#Create the settings title
+settingsHeader = Label(text = 'Enter the duration')
+settingsHeader.place(anchor = 'w', rely = horiz2, relx=vert3)
+
+#Create the entry box for entering duration
+testLen = StringVar()
+testLenEntryBox = Entry(mainWindow)
+testLenEntryBox.place(anchor = 'w', rely = horiz2, relx = vert4 )
+
+mainWindow.mainloop()
