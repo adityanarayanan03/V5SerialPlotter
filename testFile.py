@@ -2,6 +2,7 @@ from tkinter import *
 import time
 import sys
 import serial
+import serial.tools.list_ports
 import matplotlib.pyplot as plt
 
 def preProcessData(incomingDatum):
@@ -34,7 +35,7 @@ class Run:
     '''
     def __init__(self):
         self.usesStopChar = False
-        self.testLen = 0
+        self.testLen = None
         self.comPort = None
         self.dataStream = None
         self.xAxis = []
@@ -54,22 +55,17 @@ class Run:
         user input before the first release.
         '''
         if (not(self.setUpFlag)):
-            self.comPort = str(input("Please enter the V5 User port to be used:    "))
-            for i in range(3):
-                stopCharAsk = str(input("Do you want to end data collection with a stop character? (y/n)"))
-                #Structure to determine if the user wants duration based test or length based.
-                if (stopCharAsk in ["y", "Y", "yes", "Yes", "YES"]):
-                    self.usesStopChar = True
-                    break
-                elif (stopCharAsk in ["n", "N","No","no","NO"]): 
-                    self.testLen = float(input("Please enter the duration of collection (seconds):     "))
-                    break
-                else:
-                    print("That character was not understood. Please try again. ("+str(i+1)+"/3)")
-                    time.sleep(1)
-                    if (i==2):
-                        print("System Exiting")
-                        sys.exit()
+            self.comPort = comPortInput.get()
+            self.usesStopChar = not(usesDuration.get())
+            if(self.usesStopChar == False):
+                try:
+                    self.testLen = float(testLenEntryBox.get())
+                except:
+                    popUpError = Tk()
+                    popUpError.geometry("200x150")
+                    popUpError.title("Error!")
+                    errorText = Label(popUpError, text = 'Enter a number for test duration')
+                    errorText.place(relx = .025, rely = .5)
             self.setUpFlag = True
     
     def findSerialConnection(self):
@@ -157,6 +153,19 @@ class Run:
         plt.plot(self.xAxis, self.fullDataSet)
         plt.show()
         
+def runTest():
+    thisTest = Run()
+    thisTest.setUp()
+
+def createDurationEntry():
+    global testLenEntryBox
+    #Create the settings title
+    settingsHeader = Label(text = 'Enter the duration')
+    settingsHeader.place(anchor = 'w', rely = horiz2, relx=vert3)
+
+    #Create the entry box for entering duration
+    testLenEntryBox.place(anchor = 'w', rely = horiz2, relx = vert4)
+
 #Define some variables for positioning
 #Percentages of frame size for relx and rely command
 horiz1 = 0.025
@@ -180,10 +189,9 @@ settingsHeader.place(anchor = 'w', rely =vert1, relx=horiz1)
 #Create the drop-down menu for Serial port selection
 comPortInput = StringVar(mainWindow)
 comPortInput.set("Select Serial Port") #Setting Default Value
-comPortOptions = ["option1","option2"] #This is where the list of available ports will go
-w = OptionMenu(mainWindow, comPortInput, *comPortOptions)
-w.place(anchor='w', rely = horiz2, relx = vert1)
-comPortInput = comPortInput.get() #This command will prob need to go in some loop later on
+comPortOptions = [comport.device for comport in serial.tools.list_ports.comports()] #This is where the list of available ports will go
+comPortSelector = OptionMenu(mainWindow, comPortInput, *comPortOptions)
+comPortSelector.place(anchor='w', rely = horiz2, relx = vert1)
 
 #Create the save plot selector
 savePlot = BooleanVar()
@@ -192,22 +200,18 @@ savePlotCheckButton.place(anchor = 'w', rely = horiz3, relx = vert1)
 
 #Create the checkbox to use duration-based test
 usesDuration = BooleanVar()
-usesDurationCheckButton = Checkbutton(mainWindow, text = 'Time-based data collection', variable = usesDuration)
+usesDurationCheckButton = Checkbutton(mainWindow, text = 'Time-based data collection', variable = usesDuration, command = createDurationEntry)
 usesDurationCheckButton.place(anchor = 'w', rely = horiz2, relx = vert2)
+
+testLenEntryBox = Entry(mainWindow)
 
 #Create the save settings option
 saveSettings = BooleanVar()
 saveSettingsCheckButton = Checkbutton(mainWindow, text = 'Save Current Settings', variable = saveSettings)
 saveSettingsCheckButton.place(anchor = 'w', rely = horiz3, relx =vert2)
 
-#Create the settings title
-settingsHeader = Label(text = 'Enter the duration')
-settingsHeader.place(anchor = 'w', rely = horiz2, relx=vert3)
-
-#Create the entry box for entering duration
-testLen = StringVar()
-testLenEntryBox = Entry(mainWindow)
-testLenEntryBox.place(anchor = 'w', rely = horiz2, relx = vert4 )
+#Create a run button
+runButton = Button(text = 'Run', command = runTest)
+runButton.place(relx = .5, rely = .5, anchor = 'w')
 
 mainWindow.mainloop()
-
