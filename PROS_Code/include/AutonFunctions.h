@@ -6,22 +6,31 @@ set according to AutonBrakeMode.h*/
 #include "main.h"
 //void forward(float targetDistance, int maxSpeed = 170);
 void forward(){
-    int i = 1;
+    rightFrontEncoder.reset();
     printf("%s \n", "{START}");
     pros::delay(1000);
-    for(i=0; i<50000; i++){
-        chassis.moveVoltage(6000);
+    float targetVelocity;
+    float inputVelocity;
+    autonTimer.placeMark();
+    while( true){
+        chassis.moveVelocity(inputVelocity);
+        if(autonTimer.getDtFromMark().convert(second) < 10){
+            targetVelocity = 17.0 * autonTimer.getDtFromMark().convert(second);
+        } 
+        else if (autonTimer.getDtFromMark().convert(second) < 20){
+            targetVelocity = 170;
+        }
+        else if (autonTimer.getDtFromMark().convert(second) < 30){
+            targetVelocity = 170 - (autonTimer.getDtFromMark().convert(second)-20)*17.0;
+        }
+        inputVelocity = targetVelocity + .25 * (targetVelocity - chassis.getActualVelocity());
         printf("%s", "{");
-        printf("%f",leftFrontEncoder.get());
+        printf("%f", rightFrontEncoder.get());
         printf("%s", ",");
-        printf("%f",chassis.getActualVelocity());
+        printf("%f", chassis.getActualVelocity());
         printf("%s", ",");
-        printf("%f", 300.0);
-        printf("%s", ",");
-        printf("%f", 250.0);
-        printf("%s", ",");
-        printf("%f", 200.0);
-        printf("%s \n", "}");
+        printf("%f", targetVelocity); printf("%s \n", "}");
+        pros::delay(20);
     }
     printf("%s \n", "{STOP}");
     pros::delay(1000);

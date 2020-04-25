@@ -13,3 +13,5 @@ MotorGroup rightDT({dtRF, dtRB});
 //Creating one motor group for full chassis
 //essentially only for straights in auto.
 MotorGroup chassis({dtLF, dtLB, dtRF, dtRB});
+
+Timer autonTimer;

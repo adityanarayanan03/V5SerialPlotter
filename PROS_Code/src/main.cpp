@@ -4,7 +4,8 @@
 #include "opfunctions.h" //User control functions
 #include "AutonFunctions.h" //Included here to avoid function-in-function declarations.
 
-void initialize() {pros::lcd::initialize();}
+void initialize() {
+	pros::lcd::initialize();}
 
 void disabled() {}
 
@@ -19,5 +20,7 @@ void autonomous() {
 void opcontrol() {
 	//To edit brake modes, edit in the .h files. Do not edit straightaway here.
 	#include "UserBrakeMode.h"
-	chassis.moveVoltage(0);
+	chassis.moveVelocity(0);
+	printf("%s \n", " ");
+	printf("%s \n", "{STOP}");
 }
