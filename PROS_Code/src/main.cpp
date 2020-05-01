@@ -13,11 +13,10 @@ void competition_initialize() {}
 void autonomous() {
 	//To edit brake modes, edit only th .h files. Do not edit straightaway here.
 	#include "AutonBrakeMode.h"
-	forward();
+	plotLine();
 }
 
 void opcontrol() {
 	//To edit brake modes, edit in the .h files. Do not edit straightaway here.
 	#include "UserBrakeMode.h"
-	chassis.moveVoltage(0);
 }

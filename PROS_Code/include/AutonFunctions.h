@@ -4,25 +4,24 @@ variables declared here will receive global scope.
 All motors and objects used here will have brake modes
 set according to AutonBrakeMode.h*/
 #include "main.h"
-//void forward(float targetDistance, int maxSpeed = 170);
-void forward(){
-    int i = 1;
+
+void plotLine(){
+    /*
+    Function to demonstrate serial plotter. Will create linear plot.
+    */
+    plotTimer.placeMark();
     printf("%s \n", "{START}");
     pros::delay(1000);
-    for(i=0; i<50000; i++){
-        chassis.moveVoltage(6000);
+
+    while(plotTimer.getDtFromMark().convert(second) < 10.0){
         printf("%s", "{");
-        printf("%f",leftFrontEncoder.get());
+        printf("%f", plotTimer.getDtFromMark().convert(second));
         printf("%s", ",");
-        printf("%f",chassis.getActualVelocity());
-        printf("%s", ",");
-        printf("%f", 300.0);
-        printf("%s", ",");
-        printf("%f", 250.0);
-        printf("%s", ",");
-        printf("%f", 200.0);
+        printf("%f", plotTimer.getDtFromMark().convert(second) * .5);
         printf("%s \n", "}");
+        pros::delay(20);
     }
+
     printf("%s \n", "{STOP}");
     pros::delay(1000);
 }
