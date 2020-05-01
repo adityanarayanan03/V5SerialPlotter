@@ -6,13 +6,13 @@ The V5 Serial Plotter is intended to be used with the VEX V5 System, although it
 
 Until the V5 Serial Plotter is converted to windows executable files, the following Python packages must be available to plotter.py
 
-Command-Line Interface:
+Command-Line Interface (master branch):
 1. Time (default install with Python distribution)
 2. Sys (default install with Python distribution)
 3. PySerial
 4. Matplotlib
 
-Graphical Interface:
+Graphical Interface (GUI branch):
 1. Time (default install)
 2. Sys (default install)
 3. PySerial
