@@ -149,6 +149,10 @@ class Run:
         plt.show()
         
 class savePathFrame:
+    '''
+    Class for the frame that opens when user selects the update
+    save path option.
+    '''
     def onWindowClose(self):
         '''
         Procedure for saving path on exit button
@@ -205,24 +209,32 @@ def runTest():
 
 
 def createDurationEntry():
+    '''
+    Create the duration entry box if user selects the 
+    use Duration checkbox
+    '''
     global testLenEntryBox
     #Create the settings title
-    settingsHeader = Label(text = 'Enter the duration')
-    settingsHeader.place(anchor = 'w', rely = horiz2, relx=vert3)
+    durationText = Label(text = 'Enter the duration')
+    durationText.place(anchor = 'w', rely = horiz1, relx=vert3)
 
     #Create the entry box for entering duration
-    testLenEntryBox.place(anchor = 'w', rely = horiz2, relx = vert4)
+    testLenEntryBox.place(anchor = 'w', rely = horiz1, relx = vert4)
 
 savePathWindow = None
 def enterSavePath():
+    '''
+    Function to create instance of the save
+    path class. Gets called from file menu.
+    '''
     global savePathWindow
     savePathWindow = savePathFrame()
 
 #Define some variables for positioning
 #Percentages of frame size for relx and rely command
-horiz1 = 0.025
-horiz2 = 0.075
-horiz3 = 0.15
+horiz1 = 0.035
+horiz2 = 0.095
+horiz3 = 0.12
 vert1 = 0.025
 vert2 = .30
 vert3 = .6
@@ -244,32 +256,28 @@ menuBar.add_cascade(label="File", menu=fileMenu)
 menuBar.add_cascade(label = "Help", menu = helpMenu)
 mainWindow.config(menu = menuBar)
 
-#Create the settings title
-settingsHeader = Label(text = 'Settings:')
-settingsHeader.config(font = ("Times", 15))
-settingsHeader.place(anchor = 'w', rely =vert1, relx=horiz1)
 
 #Create the drop-down menu for Serial port selection
 comPortInput = StringVar(mainWindow)
 comPortInput.set("Select Serial Port") #Setting Default Value
 comPortOptions = [comport.device for comport in serial.tools.list_ports.comports()] #This is where the list of available ports will go
 comPortSelector = OptionMenu(mainWindow, comPortInput, *comPortOptions)
-comPortSelector.place(anchor='w', rely = horiz2, relx = vert1)
+comPortSelector.place(anchor='w', rely = horiz1, relx = vert1)
 
 #Create the save plot selector
 savePlot = BooleanVar()
 savePlotCheckButton = Checkbutton(mainWindow, text = 'Save Plot', variable= savePlot)
-savePlotCheckButton.place(anchor = 'w', rely = horiz3, relx = vert1)
+savePlotCheckButton.place(anchor = 'e', rely = horiz3, relx = .45)
 
 #Create the checkbox to use duration-based test
 usesDuration = BooleanVar()
 usesDurationCheckButton = Checkbutton(mainWindow, text = 'Time-based data collection', variable = usesDuration, command = createDurationEntry)
-usesDurationCheckButton.place(anchor = 'w', rely = horiz2, relx = vert2)
+usesDurationCheckButton.place(anchor = 'w', rely = horiz1, relx = vert2)
 
 testLenEntryBox = Entry(mainWindow)
 
 #Create a run button
-runButton = Button(text = 'Run', command = runTest)
-runButton.place(relx = .5, rely = .5, anchor = 'w')
+runButton = Button(text = 'Run', command = runTest, width = 7, height = 1)
+runButton.place(rely=horiz3, relx = .55, anchor = 'w')
 
 mainWindow.mainloop()
