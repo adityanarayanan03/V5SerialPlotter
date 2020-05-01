@@ -26,4 +26,4 @@ Graphical Interface (GUI branch):
 3. Run plotter.py
 4. Select or enter the name of the V5-user port.
 5. You have 2 options for the duration of the data collection: time-based, or stop-character based. The example code in PROS_Code is set up to use stop-character based (default method).
-6. When outputting data to be plotted, format the data as follows: output {START} to begin data collection, output data to be graphed as {x_axis, y_axis1, y_axis2, etc} followed by a newline, and end collection with {STOP}. Note: Include braces as these are the limiter characters for interpreting data. See PROS_Code/include/AutonFunctions.h for an example.
+6. When outputting data to be plotted, format the data as follows: output {START} to begin data collection, output data to be graphed as {x_axis, y_axis1, y_axis2, etc} followed by a newline, and end collection with {STOP}. Note: Include braces as these are the delimiters for interpreting data. See PROS_Code/include/AutonFunctions.h for an example.
