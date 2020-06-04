@@ -5,6 +5,14 @@ import serial
 import serial.tools.list_ports
 import matplotlib.pyplot as plt
 
+def printToConsole(outputBox, output):
+    '''
+    Prints out to the tkinter window on line 1
+    '''
+    outputBox.delete(1.0, "end")
+    outputBox.insert("end", output)
+
+    
 def preProcessData(incomingDatum):
     '''
     This function will take in a single line from the serial 
@@ -87,12 +95,13 @@ class Run:
         This function blocks code until the "START" command is received.
         '''
         #This loop waits for the START Command from V5 Brain
-        print("Waiting for data stream to start.")
         startTime = time.time()
-        while (time.time() - startTime < 30.0):
+        while (time.time() - startTime <= 30.0):
+            printToConsole(textConsole, "Waiting for data stream to start. (" + str(int(time.time() - startTime)) + "/30)")
             if(preProcessData(self.dataStream.readline())[0] == 'START'): #I know (is) is preferred to == but for some reason only == works.
-                print("Start command received. Starting Collection")
+                printToConsole(textConsole, "Start command received. Starting Collection")
                 return True
+            mainWindow.update()
         return False
     
     def loop(self):
@@ -115,10 +124,10 @@ class Run:
                 #unpacks and decodes serial lines
                 incomingDatum = preProcessData(self.dataStream.readline())
                 if(incomingDatum[0]=="STOP"):
-                    print("Stop Command Received.")
+                    printToConsole(textConsole, "Stop Command Received.")
                     time.sleep(1)
                     break
-                print(time.time() - startTime)
+                printToConsole(textConsole, str(int(time.time() - startTime)))
                 #Convert list of strings into a list of float
                 try:
                     for stringDatumIndex in range(len(incomingDatum)):
@@ -128,10 +137,9 @@ class Run:
                     incomingDatum.pop(0) #Delete x-series value from the datum list
                     self.fullDataSet.append(incomingDatum) #append the n-series' of single element list to full set
                 except:
-                    print("Something went wrong! Continuing collection.")
                     lineDropCount += 1
                     if (lineDropCount > 50):
-                        print("Too many errors. Stopping collection")
+                        printToConsole(textConsole, "Too many errors. Stopping collection")
                         sys.exit()
 
     def plot(self):
@@ -188,7 +196,6 @@ def runTest():
     thisTest.setUp() #Set up the test. Double set up protection is contained in setUp()
     connectionFound = thisTest.findSerialConnection()
     if (connectionFound):
-        print("Do Some Stuff")
         startReceived = thisTest.waitForStart()
         if (startReceived):
             thisTest.loop()
@@ -198,6 +205,7 @@ def runTest():
             popUpError2 = Tk()
             popUpError2.geometry("300x100")
             popUpError2.title("Error!")
+            textConsole.delete(1.0, "end")
             errorText2 = Label(popUpError2, text = 'Timed out waiting for start command.')
             errorText2.place(relx = .5, rely = .5, anchor = CENTER)
     else:
@@ -279,5 +287,9 @@ testLenEntryBox = Entry(mainWindow)
 #Create a run button
 runButton = Button(text = 'Run', command = runTest, width = 7, height = 1)
 runButton.place(rely=horiz3, relx = .55, anchor = 'w')
+
+#Create a text console for output
+textConsole = Text(mainWindow, width = 75, height = 3)
+textConsole.place(rely = .3, relx = .5, anchor = CENTER)
 
 mainWindow.mainloop()
