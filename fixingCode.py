@@ -1,10 +1,12 @@
 from tkinter import *
 from tkinter import filedialog
 import time
+from time import gmtime, strftime
 import sys
 import serial
 import serial.tools.list_ports
 import matplotlib.pyplot as plt
+import os
 
 def printToConsole(outputBox, output):
     '''
@@ -59,7 +61,7 @@ class Run:
             try:
                 self.testLen = float(testLenEntryBox.get())
             except:
-                testLenEntryError = popUpError(200, 150, "Enter a number for test duration")
+                _testLenEntryError = popUpError(200, 150, "Enter a number for test duration")
     
         try:
             self.dataStream = serial.Serial(self.comPort, baudrate = 115200,timeout = 1) #Set to maximum baud for pReCIsIoN.
@@ -67,7 +69,7 @@ class Run:
 
         except:
             pass
-            dataStreamError = popUpError(200, 150, "bad data stream")
+            _dataStreamError = popUpError(200, 150, "bad data stream")
 
     def waitForStart(self):
         '''
@@ -83,7 +85,7 @@ class Run:
                     mainWindow.update()
                     return True
                 mainWindow.update()
-            timeOutError = popUpError(200, 150, "Time Out!")
+            _timeOutError = popUpError(200, 150, "Time Out!")
             printToConsole(textConsole, " ")
             return False
         else:
@@ -133,12 +135,9 @@ class Run:
         '''
         plt.plot(self.xAxis, self.fullDataSet)
         if (savePlot.get()):
-            if (savePathWindow != None):
-                #plt.savefig()
-                pass #take this out when update path
-            else:
-                #plt.savefig() but to default path
-                pass #Take this out when update path
+            plt.savefig(saveDirectory + "/" + strftime('%Y-%m-%d-%H-%M', gmtime()) + ".pdf")
+            print(saveDirectory + "/" + strftime('%Y-%m-%d-%H-%M', gmtime()) + ".pdf")
+            pass
         plt.show()
 
 def performSingleRun():
@@ -148,6 +147,7 @@ def performSingleRun():
         currentRun.plot()
 
     del currentRun
+    print("current Run Deleted")
 
 
 class popUpError:
@@ -173,7 +173,8 @@ def createDurationEntry():
     testLenEntryBox.place(anchor = 'w', rely = horiz1, relx = vert4)
 
 global saveDirectory
-saveDirectory = ""
+saveDirectory = os.path.abspath(os.getcwd())
+print(saveDirectory)
 def enterSavePath():
     '''
     Function to create instance of the save
