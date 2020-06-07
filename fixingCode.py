@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import filedialog
 import time
 import sys
 import serial
@@ -48,66 +49,45 @@ class Run:
         self.dataStream = None
         self.xAxis = []
         self.fullDataSet = []
-        self.setUpFlag = False
         self.connectionFlag = False
 
-    def reset(self):
-        self.usesStopChar = False
-        self.testLen = None
-        self.comPort = None
-        self.dataStream = None
-        self.xAxis = []
-        self.fullDataSet = []
-        self.setUpFlag = False
-        self.connectionFlag = False
+        self.okForGo = False
 
-    def setUp(self):
-        '''
-        This function takes input to determine settings for the run.
-        This should be modified to take data from buttons rather than
-        user input before the first release.
-        '''
-        if (not(self.setUpFlag)):
-            self.comPort = comPortInput.get()
-            self.usesStopChar = not(usesDuration.get())
-            if(self.usesStopChar == False):
-                try:
-                    self.testLen = float(testLenEntryBox.get())
-                except:
-                    popUpError = Tk()
-                    popUpError.geometry("200x150")
-                    popUpError.title("Error!")
-                    errorText = Label(popUpError, text = 'Enter a number for test duration')
-                    errorText.place(relx = .025, rely = .5)
-            self.setUpFlag = True
+        self.comPort = comPortInput.get()
+        self.usesStopChar = not(usesDuration.get())
+        if(self.usesStopChar == False):
+            try:
+                self.testLen = float(testLenEntryBox.get())
+            except:
+                testLenEntryError = popUpError(200, 150, "Enter a number for test duration")
     
-    def findSerialConnection(self):
-        '''
-        This function will find a serial connection on the specified port.
-        Once the dataStream variable is set, this function should not be run 
-        again without reset(). This should be proofed by the self.connectionFlag.
-        '''
         try:
             self.dataStream = serial.Serial(self.comPort, baudrate = 115200,timeout = 1) #Set to maximum baud for pReCIsIoN.
-            return True
+            self.okForGo = True
 
-        #Error handling in the chance of no serial link found
         except:
-            return False
+            pass
+            dataStreamError = popUpError(200, 150, "bad data stream")
 
     def waitForStart(self):
         '''
         This function blocks code until the "START" command is received.
         '''
-        #This loop waits for the START Command from V5 Brain
-        startTime = time.time()
-        while (time.time() - startTime <= 30.0):
-            printToConsole(textConsole, "Waiting for data stream to start. (" + str(int(time.time() - startTime)) + "/30)")
-            if(preProcessData(self.dataStream.readline())[0] == 'START'): #I know (is) is preferred to == but for some reason only == works.
-                printToConsole(textConsole, "Start command received. Starting Collection")
-                return True
-            mainWindow.update()
-        return False
+        if(self.okForGo):
+            #This loop waits for the START Command from V5 Brain
+            startTime = time.time()
+            while (time.time() - startTime <= 30.0):
+                printToConsole(textConsole, "Waiting for data stream to start. (" + str(int(time.time() - startTime)) + "/30)")
+                if(preProcessData(self.dataStream.readline())[0] == 'START'): #I know (is) is preferred to == but for some reason only == works.
+                    printToConsole(textConsole, "Start command received. Starting Collection")
+                    mainWindow.update()
+                    return True
+                mainWindow.update()
+            timeOutError = popUpError(200, 150, "Time Out!")
+            printToConsole(textConsole, " ")
+            return False
+        else:
+            return False
     
     def loop(self):
         '''
@@ -160,65 +140,23 @@ class Run:
                 #plt.savefig() but to default path
                 pass #Take this out when update path
         plt.show()
-        
-class savePathFrame:
-    '''
-    Class for the frame that opens when user selects the update
-    save path option.
-    '''
-    def onWindowClose(self):
-        '''
-        Procedure for saving path on exit button
-        '''
-        self.savePath = self.savePathInputBox.get()
-        self.savePathWindow.destroy()
 
-    '''
-    This class contains the pop up frame for entering a new save path
-    '''
-    def __init__(self):
-        '''
-        Standard method to initialize object
-        '''
-        self.savePath = None #Should really be default path of this program.
-        self.savePathWindow = Tk()
-        self.savePathWindow.geometry("220x100")
-        self.savePathWindow.title("Enter Save Path")
-        self.savePathInputBox = Entry(self.savePathWindow)
-        self.savePathInputBox.place(anchor = 'n', relx = .5, rely = .5)
-        self.savePathInputTitle = Label(self.savePathWindow, text = 'Enter the file path to save plots to:')
-        self.savePathInputTitle.place(anchor = 's', relx = .5, rely = .5)
+def performSingleRun():
+    currentRun = Run()
+    if (currentRun.waitForStart()):
+        currentRun.loop()
+        currentRun.plot()
 
-        self.savePathWindow.protocol("WM_DELETE_WINDOW", self.onWindowClose)
+    del currentRun
 
-        #self.savePathWindow.mainloop()
 
-def runTest():
-    '''
-    Function to run the main testing loop.
-    '''
-    thisTest = Run() #Creating object for current run
-    thisTest.setUp() #Set up the test. Double set up protection is contained in setUp()
-    connectionFound = thisTest.findSerialConnection()
-    if (connectionFound):
-        startReceived = thisTest.waitForStart()
-        if (startReceived):
-            thisTest.loop()
-            thisTest.plot()
-            thisTest.reset()
-        else:
-            popUpError2 = Tk()
-            popUpError2.geometry("300x100")
-            popUpError2.title("Error!")
-            textConsole.delete(1.0, "end")
-            errorText2 = Label(popUpError2, text = 'Timed out waiting for start command.')
-            errorText2.place(relx = .5, rely = .5, anchor = CENTER)
-    else:
-        popUpError = Tk()
-        popUpError.geometry("200x150")
-        popUpError.title("Error!")
-        errorText = Label(popUpError, text = 'Selected COM Port is not available')
-        errorText.place(relx = .5, rely = .5, anchor = CENTER)
+class popUpError:
+    def __init__(self, sizeX, sizeY, message):
+        self.errorObject = Tk()
+        self.errorObject.geometry(str(sizeX) + "x"+str(sizeY))
+        self.errorObject.title("Error!")
+        self.errorText = Label(self.errorObject, text = message)
+        self.errorText.place(relx = .5, rely = .5, anchor = CENTER)
 
 
 def createDurationEntry():
@@ -234,14 +172,16 @@ def createDurationEntry():
     #Create the entry box for entering duration
     testLenEntryBox.place(anchor = 'w', rely = horiz1, relx = vert4)
 
-savePathWindow = None
+global saveDirectory
+saveDirectory = ""
 def enterSavePath():
     '''
     Function to create instance of the save
     path class. Gets called from file menu.
     '''
-    global savePathWindow
-    savePathWindow = savePathFrame()
+    global saveDirectory
+    saveDirectory = filedialog.askdirectory()
+    print(saveDirectory)
 
 #Define some variables for positioning
 #Percentages of frame size for relx and rely command
@@ -261,7 +201,7 @@ mainWindow.title("PROS Serial Plotter")
 #This block is all for creating the File and Help menu at the top of the window
 menuBar = Menu(mainWindow)
 fileMenu = Menu(menuBar, tearoff = 0)
-fileMenu.add_command(label = "Save Path", command = enterSavePath)
+fileMenu.add_command(label = "Edit Save Path", command = enterSavePath)
 fileMenu.add_separator()
 helpMenu = Menu(menuBar, tearoff = 0)
 helpMenu.add_command(label = "About")
@@ -290,7 +230,7 @@ usesDurationCheckButton.place(anchor = 'w', rely = horiz1, relx = vert2)
 testLenEntryBox = Entry(mainWindow)
 
 #Create a run button
-runButton = Button(text = 'Run', command = runTest, width = 7, height = 1)
+runButton = Button(text = 'Run', command = performSingleRun, width = 7, height = 1)
 runButton.place(rely=horiz3, relx = .55, anchor = 'w')
 
 #Create a text console for output
