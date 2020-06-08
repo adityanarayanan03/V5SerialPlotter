@@ -1,6 +1,6 @@
 # V5 Serial Plotter
 
-The V5 Serial Plotter is intended to be used with the VEX V5 System, although it can be used with any external device capable of communicating to a Windows COM Port. 
+The V5 Serial Plotter is intended to be used with the VEX V5 System and the PROS language, although it can be used with any external device capable of Serial communication with a windows machine. 
 
 ### Setting up the V5 Serial Plotter
 
