@@ -5,7 +5,7 @@ from time import gmtime, strftime
 import sys
 import serial
 import serial.tools.list_ports
-import matplotlib.pyplot as plt
+import matplotlib
 import os
 
 def printToConsole(outputBox, output):
@@ -133,18 +133,18 @@ class Run:
         '''
         Uses Matplotlib.pyplot to plot the data set after looping.
         '''
-        plt.plot(self.xAxis, self.fullDataSet)
+        matplotlib.pyplot.plot(self.xAxis, self.fullDataSet)
         if (savePlot.get()):
-            plt.savefig(saveDirectory + "/" + strftime('%Y-%m-%d-%H-%M', gmtime()) + ".pdf")
+            matplotlib.pyplot.savefig(saveDirectory + "/" + strftime('%Y-%m-%d-%H-%M', gmtime()) + ".pdf")
             print(saveDirectory + "/" + strftime('%Y-%m-%d-%H-%M', gmtime()) + ".pdf")
             pass
-        plt.show()
+        matplotlib.pyplot.show()
 
 def performSingleRun():
     currentRun = Run()
     if (currentRun.waitForStart()):
         currentRun.loop()
-        currentRun.plot()
+        #currentRun.plot()
 
     del currentRun
     print("current Run Deleted")
