@@ -1,6 +1,6 @@
-# V5 Serial Plotter
+# About The V5 Serial Plotter
 
-The V5 Serial Plotter is intended to be used with the VEX V5 System and the PROS language, although it can be used with any external device capable of Serial communication with a windows machine. 
+Serial monitors and serial plotters are some of the most useful tools for debugging programs and obtaining data on program performance over time. For the VEX Cortex/VEX V5 system, a serial monitor is readily available within the coding environment in both PROS and VEXCode; however, both environments lack a serial monitor capable of graphically displaying data collected from the Cortex/Brain. Currently, the most widely used method of graphing data from the brain is to save said data to an SD card as a .csv file and plot using plotting tools such as Excel or Google Sheets. The V5 Serial Plotter aims to provide a more efficient process by creating a serial plotter with a graphical interface for creating easily customizable graphs with a permanent link to the Cortex/V5 Brain.
 
 ### Setting up the V5 Serial Plotter
 
