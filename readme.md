@@ -29,7 +29,7 @@ while (i=0; i<=5; i++){
 	printf('%s \n', '}');
 	delay(1000);
 }
-printf('%s \n', '{STOP}')
+printf('%s \n', '{STOP}');
 ```
 The result of the above code, if viewed in the PROS/VEXCode terminal, is
 ```
