@@ -19,13 +19,13 @@ The plotter essentially scans the serial port from the Brain searching for outpu
 4. An example of non-modular code that can create the intended results is:
 ```C++
 printf('%s \n', '{START}');
-while (i=0; i<=5; i++){
+while (i=1; i<=5; i++){
 	printf('%s', '{');
-	printf('%f', time);
+	printf('%f', i);
 	printf('%s', ',');
-	printf('%f', time * 2.0);
+	printf('%f', i * 2.0);
 	printf('%s', ',');
-	printf('%f', time * 5.0);
+	printf('%f', i * 5.0);
 	printf('%s \n', '}');
 	delay(1000);
 }
