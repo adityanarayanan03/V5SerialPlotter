@@ -1,3 +1,8 @@
+'''
+Currently one edit ahead of latest release:
+1. Replaced call to plot function in single run function
+'''
+
 from tkinter import *
 from tkinter import filedialog
 import time
@@ -6,7 +11,10 @@ import sys
 import serial
 import serial.tools.list_ports
 import matplotlib
+import matplotlib.pyplot as plt
+import mpl_toolkits
 import os
+import webbrowser
 
 def printToConsole(outputBox, output):
     '''
@@ -18,7 +26,7 @@ def printToConsole(outputBox, output):
     
 def preProcessData(incomingDatum):
     '''
-    This function will take in a single line from the serial 
+    takes in a single line from the serial 
     stream (with all the mumbo jumbo) and clean it up. Decode
     using utf-8 encoding, strip of any newline characters that
     may be present, and save data between the start character({) and
@@ -133,18 +141,18 @@ class Run:
         '''
         Uses Matplotlib.pyplot to plot the data set after looping.
         '''
-        matplotlib.pyplot.plot(self.xAxis, self.fullDataSet)
+        plt.plot(self.xAxis, self.fullDataSet)
         if (savePlot.get()):
-            matplotlib.pyplot.savefig(saveDirectory + "/" + strftime('%Y-%m-%d-%H-%M', gmtime()) + ".pdf")
+            plt.savefig(saveDirectory + "/" + strftime('%Y-%m-%d-%H-%M', gmtime()) + ".pdf")
             print(saveDirectory + "/" + strftime('%Y-%m-%d-%H-%M', gmtime()) + ".pdf")
             pass
-        matplotlib.pyplot.show()
+        plt.show()
 
 def performSingleRun():
     currentRun = Run()
     if (currentRun.waitForStart()):
         currentRun.loop()
-        #currentRun.plot()
+        currentRun.plot()
 
     del currentRun
     print("current Run Deleted")
@@ -184,6 +192,13 @@ def enterSavePath():
     saveDirectory = filedialog.askdirectory()
     print(saveDirectory)
 
+def openGitHub():
+    '''
+    Opens the Git repo when help is hit.
+    '''
+    url = 'https://github.com/adityanarayanan03/V5SerialPlotter/tree/GUI'
+    webbrowser.open(url, new=0, autoraise=True)
+
 #Define some variables for positioning
 #Percentages of frame size for relx and rely command
 horiz1 = 0.035
@@ -197,7 +212,7 @@ vert4 = .75
 #Create the full window that user will see
 mainWindow = Tk()
 mainWindow.geometry("700x700")
-mainWindow.title("PROS Serial Plotter")
+mainWindow.title("V5 Serial Plotter")
 
 #This block is all for creating the File and Help menu at the top of the window
 menuBar = Menu(mainWindow)
@@ -205,7 +220,7 @@ fileMenu = Menu(menuBar, tearoff = 0)
 fileMenu.add_command(label = "Edit Save Path", command = enterSavePath)
 fileMenu.add_separator()
 helpMenu = Menu(menuBar, tearoff = 0)
-helpMenu.add_command(label = "About")
+helpMenu.add_command(label = "About", command = openGitHub)
 menuBar.add_cascade(label="File", menu=fileMenu)
 menuBar.add_cascade(label = "Help", menu = helpMenu)
 mainWindow.config(menu = menuBar)
