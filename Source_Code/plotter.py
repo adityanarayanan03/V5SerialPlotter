@@ -155,7 +155,7 @@ def performSingleRun():
         currentRun.plot()
 
     del currentRun
-    print("current Run Deleted")
+    #print("current Run Deleted")
 
 
 class popUpError:
@@ -182,7 +182,7 @@ def createDurationEntry():
 
 global saveDirectory
 saveDirectory = os.path.abspath(os.getcwd())
-print(saveDirectory)
+#print(saveDirectory)
 def enterSavePath():
     '''
     Function to create instance of the save
@@ -190,13 +190,13 @@ def enterSavePath():
     '''
     global saveDirectory
     saveDirectory = filedialog.askdirectory()
-    print(saveDirectory)
+    #print(saveDirectory)
 
 def openGitHub():
     '''
     Opens the Git repo when help is hit.
     '''
-    url = 'https://github.com/adityanarayanan03/V5SerialPlotter/tree/GUI'
+    url = 'https://github.com/adityanarayanan03/V5SerialPlotter/blob/master/readme.md'
     webbrowser.open(url, new=0, autoraise=True)
 
 #Define some variables for positioning
