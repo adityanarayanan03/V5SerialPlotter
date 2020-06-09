@@ -14,13 +14,12 @@ void plotLine()
     printf("%s \n", "{START}");
     pros::delay(1000);
 
+    std::vector<double> plotterPass;
+
     while (plotTimer.getDtFromMark().convert(second) < 10.0)
     {
-        printf("%s", "{");
-        printf("%f", plotTimer.getDtFromMark().convert(second));
-        printf("%s", ",");
-        printf("%f", plotTimer.getDtFromMark().convert(second) * .5);
-        printf("%s \n", "}");
+        plotterPass = {plotTimer.getDtFromMark().convert(second), 2.0*plotTimer.getDtFromMark().convert(second), 5.0};
+        plotterPrint(plotterPass);
         pros::delay(20);
     }
 
