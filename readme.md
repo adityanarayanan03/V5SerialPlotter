@@ -43,6 +43,7 @@ The result of the above code, if viewed in the PROS/VEXCode terminal, is
 ```
 The above code and ouput will generate 
 ![Demo Image](https://github.com/adityanarayanan03/V5SerialPlotter/blob/GUI/Examples/ReadMeExample.pdf)
+
 ### Using the V5 Serial Plotter
 
 1. Connect to the V5 Brain through the Brain's micro USB port.
